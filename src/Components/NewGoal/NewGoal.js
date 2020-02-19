@@ -1,22 +1,17 @@
-import React, { Component } from 'react'
-import { useState } from 'react';
+import React, { Component } from "react";
 
 export class NewGoal extends Component {
-    useState([
-        { id: 123, title: "Complete MERN project", description: 'React Goal tracking project', hours: 2},
-        { id: 234, title: "Complete VUE project", description: 'React Goal tracking project', hours: 2},
-        { id: 345, title: "Complete MEAN project", description: 'React Goal tracking project', hours: 2}
-    ])
-
-    render() {
-        return (
-            <div>
-                <p>Add a new goal!</p>
-                <input type="text"></input>
-                <button type="submit">Add</button>
-            </div>
-        )
-    }
+  render() {
+    return (
+      <div>
+        <p>Add a new goal!</p>
+        <form>
+          <input type="text"></input>
+          <button type="submit">Add</button>
+        </form>
+      </div>
+    );
+  }
 }
 
-export default NewGoal
+export default NewGoal;
