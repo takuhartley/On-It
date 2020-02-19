@@ -1,12 +1,11 @@
 import React from 'react';
-import logo from './logo.svg';
+import Homepage from './Components/Homepage/Homepage'
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-    <h1>On + It</h1>
-    <p>A simple progress tracking app</p>
+    <Homepage />
     <nav>
       <ul>
         <li>Home</li>
