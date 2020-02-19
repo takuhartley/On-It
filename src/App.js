@@ -1,18 +1,15 @@
-import React from 'react';
-import Homepage from './Components/Homepage/Homepage'
-import './App.css';
+import React from "react";
+import Homepage from "./Components/Homepage/Homepage";
+import Nav from "./Components/Navigation/Nav";
+import NewGoal from "./Components/NewGoal/NewGoal";
+import "./App.css";
 
 function App() {
   return (
     <div className="App">
-    <Homepage />
-    <nav>
-      <ul>
-        <li>Home</li>
-        <li>Register</li>
-        <li>Login</li>
-      </ul>
-    </nav>
+      <Homepage />
+      <Nav />
+      <NewGoal />
     </div>
   );
 }
