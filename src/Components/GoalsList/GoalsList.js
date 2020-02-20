@@ -2,7 +2,7 @@ import React from "react";
 import "./GoalsList.css";
 
 const GoalsList = props => {
-  console.log(props.userGoals);
+  // console.log(props.userGoals);
   return (
     <div className="goals-list">
       <p>Your current goals</p>

@@ -1,17 +1,22 @@
-import React, { Component } from "react";
+import React from "react";
 
-export class NewGoal extends Component {
-  render() {
-    return (
-      <div>
-        <p>Add a new goal!</p>
-        <form>
-          <input type="text"></input>
-          <button type="submit">Add</button>
-        </form>
-      </div>
-    );
-  }
-}
+const NewGoal = props => {
+  const addGoalHandler = e => {
+    e.preventDefault();
+    const newGoal = {
+      id: Math.random().toString(),
+      title: "My New Goal",
+      description: "New Goal",
+      hours: 1
+    };
+    props.onAddGoal(newGoal);
+  };
+  return (
+    <form onSubmit={addGoalHandler}>
+      <input type="text" />
+      <button type="submit">Add</button>
+    </form>
+  );
+};
 
 export default NewGoal;
