@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import Homepage from "./Components/Homepage/Homepage";
 import Nav from "./Components/Navigation/Nav";
 import NewGoal from "./Components/NewGoal/NewGoal";
 import "./App.css";
 import GoalsList from "./Components/GoalsList/GoalsList";
 function App() {
-  const userGoals = [
+  const [userGoals, setGoals] = useState([
     {
       id: 123,
       title: "Complete MERN project",
@@ -24,10 +24,10 @@ function App() {
       description: "React Goal tracking project",
       hours: 2
     }
-  ];
+  ]);
+
   const addNewGoalHandler = newGoal => {
-    userGoals.push(newGoal);
-    console.log(userGoals);
+    setGoals(userGoals.concat(newGoal));
   };
   return (
     <div className="App">
