@@ -1,10 +1,15 @@
 import React, { useState } from "react";
-
+import {
+  BrowserRouter as Router,
+  // Route,
+  // Redirect,
+  // Switch
+} from "react-router-dom";
 // Imported Files
-import Homepage from "./shared/pages/Homepage/Homepage";
-import Nav from "./shared/components/navigation/Nav";
-import CreateGoal from "./goal/components/CreateGoal/CreateGoal";
-import GoalList from "./goal/components/GoalsList/GoalList";
+import Homepage from "../shared/pages/Homepage/Homepage";
+import Nav from "../shared/components/navigation/Nav";
+import CreateGoal from "../goal/components/CreateGoal/CreateGoal";
+import GoalList from "../goal/components/GoalsList/GoalList";
 
 // CSS
 import "./App.css";
@@ -39,12 +44,14 @@ function App() {
     });
   };
   return (
-    <div className="App">
-      <Homepage />
-      <Nav />
-      <CreateGoal onAddGoal={addNewGoalHandler} />
-      <GoalList userGoals={userGoals} />
-    </div>
+    <Router>
+      <div className="App">
+        <Homepage />
+        <Nav />
+        <CreateGoal onAddGoal={addNewGoalHandler} />
+        <GoalList userGoals={userGoals} />
+      </div>
+    </Router>
   );
 }
 
