@@ -27,13 +27,17 @@ function App() {
   ]);
 
   const addNewGoalHandler = newGoal => {
-    setGoals(userGoals.concat(newGoal));
+    // setGoals(userGoals.concat(newGoal));
+    // Bullet proof
+    setGoals(previousGoals => {
+      return previousGoals.concat(newGoal);
+    });
   };
   return (
     <div className="App">
       <Homepage />
       <Nav />
-      <NewGoal onAddGoal = {addNewGoalHandler} />
+      <NewGoal onAddGoal={addNewGoalHandler} />
       <GoalsList userGoals={userGoals} />
     </div>
   );
