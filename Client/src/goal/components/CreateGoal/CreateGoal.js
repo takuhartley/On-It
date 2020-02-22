@@ -1,4 +1,4 @@
-import React, {useState}from "react";
+import React, { useState} from "react";
 
 const CreateGoal = props => {
   const [enteredText, setEnteredText] = useState('')
@@ -14,13 +14,24 @@ const CreateGoal = props => {
     props.onAddGoal(newGoal);
 
   };
-  const textChangeHanlder = e => {
-    setEnteredText(e.target.value);
-  };
+
+  const setTitleHandler = e => {
+    console.log(e.target.value);
+  }
+  const setDescriptionHandler = e => {
+    console.log(e.target.value);
+  }
+  const setTotalTimeHanlder = e => {
+    console.log(e.target.value);
+  }
+  
 
   return (
+    <h1>Add a New Goal</h1>
     <form onSubmit={addGoalHandler}>
-      <input type="text" value={enteredText} onChange={textChangeHanlder} />
+      <input type="text" value={enteredText} onChange={setTitleHandler} />
+      <input type="text" value={enteredText} onChange={setDescriptionHandler} />
+      <input type="text" value={enteredText} onChange={setTotalTimeHanlder} />
       <button type="submit">Add</button>
     </form>
   );
