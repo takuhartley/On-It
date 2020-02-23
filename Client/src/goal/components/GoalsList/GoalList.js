@@ -1,29 +1,34 @@
 import React from "react";
-import {
-  BrowserRouter as Router
-  // Route,
-  // Redirect,
-  // Switch
-} from "react-router-dom";
-// CSS
+import GoalDetails from "../GoalDetail/GoalDetail";
 import "./GoalList.css";
 
 const GoalsList = props => {
+  // console.log(props.number);
   // console.log(props.userGoals);
-  return (
-    <div className="goals-list">
-      <p>User's current goals</p>
-      <ul>
-        {props.userGoals.map(goal => {
-          return (
-            <li key={goal.id}>
-              Goal: {goal.title} | Details: {goal.description} | Total Time: {goal.totalTime} | Status: {goal.completed ? "Completed" : "Not done"}
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
+  // const goal = (
+  //   <div>
+  //     {props.userGoals.map(goal => {
+  //       return (
+  //         <GoalDetails
+  //           key={goal.id}
+  //           title={goal.title}
+  //           description={goal.description}
+  //           totalTime={goal.totalTime}
+  //           completed={goal.completed}
+  //         />
+  //       );
+  //     })}
+  //   </div>
+  // );
+  return (<ul>
+  {props.userGoals.map(ug => (
+    <li key={ug.id}>
+      <span>Task: {ug.title} </span>
+      <span>Summary: {ug.description} </span>
+      <span>Duration: {ug.duration} </span>
+      <span>Status: {ug.completed ? "Done" : "In Progress"} </span>
+    </li>
+  ))}
+</ul>);
 };
-
 export default GoalsList;

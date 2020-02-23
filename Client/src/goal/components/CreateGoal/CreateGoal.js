@@ -1,39 +1,54 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 
 const CreateGoal = props => {
-  const [enteredText, setEnteredText] = useState('')
-  const addGoalHandler = e => {
-    e.preventDefault();
-    const newGoal = {
-      id: Math.random().toString(),
-      title: enteredText,
-      description: "New Goal",
-      hours: 1
-    };
-    setEnteredText('');
-    props.onAddGoal(newGoal);
+  const [enteredTitle, setEnteredTitle] = useState("");
+  const [enteredDescription, setEnteredDescription] = useState("");
+  const [enteredDuration, setEnteredDuration] = useState("");
+  const [enteredCompleted, setEnteredCompleted] = useState(false);
 
+  const submitHandler = event => {
+    event.preventDefault();
+    props.onAddGoal({
+      title: enteredTitle,
+      description: enteredDescription,
+      duration: enteredDuration
+    });
   };
 
-  const setTitleHandler = e => {
-    console.log(e.target.value);
-  }
-  const setDescriptionHandler = e => {
-    console.log(e.target.value);
-  }
-  const setTotalTimeHanlder = e => {
-    console.log(e.target.value);
-  }
-  
-
   return (
-    <h1>Add a New Goal</h1>
-    <form onSubmit={addGoalHandler}>
-      <input type="text" value={enteredText} onChange={setTitleHandler} />
-      <input type="text" value={enteredText} onChange={setDescriptionHandler} />
-      <input type="text" value={enteredText} onChange={setTotalTimeHanlder} />
-      <button type="submit">Add</button>
-    </form>
+    <div>
+      <h1>Add a New Goal</h1>
+      <form onSubmit={submitHandler}>
+        <label>Title</label>
+        <input
+          type="text"
+          value={enteredTitle}
+          onChange={event => {
+            setEnteredTitle(event.target.value);
+          }}
+        />
+
+        <label>Description</label>
+        <input
+          type="text"
+          value={enteredDescription}
+          onChange={event => {
+            setEnteredDescription(event.target.value);
+          }}
+        />
+
+        <label>Total Hours:</label>
+        <input
+          type="text"
+          value={enteredDuration}
+          onChange={event => {
+            setEnteredDuration(event.target.value);
+          }}
+        />
+
+        <button type="submit">Create Goal</button>
+      </form>
+    </div>
   );
 };
 
