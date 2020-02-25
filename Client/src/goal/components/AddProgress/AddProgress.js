@@ -1,12 +1,12 @@
 import React from "react";
 
-const AddProgress = () => {
+const AddProgress = props => {
   return (
     <div>
       <label>Add Description</label>
-      <input type="text"></input>
+      <input type="text" />
       <label>Add Hours</label>
-      <input type="text"></input>
+      <input type="text" />
       <button type="submit">Add Progress</button>
     </div>
   );

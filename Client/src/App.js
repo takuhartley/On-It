@@ -1,16 +1,11 @@
 import React, { useState } from "react";
-import {
-  BrowserRouter as Router
-  // Route,
-  // Redirect,
-  // Switch
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 // Imported Files
 import Homepage from "./shared/pages/Homepage/Homepage";
 import Nav from "./shared/components/navigation/Nav";
 import CreateGoal from "./goal/components/CreateGoal/CreateGoal";
 import GoalList from "./goal/components/GoalsList/GoalList";
-
+import ErrorBoundary from "./ErrorBoundary/ErrorBoundary";
 // CSS
 import "./App.css";
 
@@ -48,23 +43,43 @@ function App() {
   //   }
   // ]);
   const [enteredGoal, setEnteredGoal] = useState([]);
-  const addGoalHandler = goal => {
+  const deleteGoalHandler = goal => {
+    console.log(goal);
+    // setEnteredGoal(prevGoals => {
+    //   prevGoals.splice(goal);
+    // })
+  };
+  const addGoalHandler = (goal, id) => {
     setEnteredGoal(prevGoals => [
       ...prevGoals,
       { id: Math.random().toString(), ...goal }
     ]);
   };
 
+  console.log(enteredGoal);
   return (
     <Router>
       <div className="App">
-        <Homepage />
-        <Nav />
-        <CreateGoal onAddGoal={addGoalHandler}/>
-        <GoalList userGoals={enteredGoal}/>
+        <Switch>
+          <Route exact path="/" render={<Homepage />} />
+          <Route exact path="/goals" render={props => <GoalList userGoals={enteredGoal} {...props}/>} />
+          <Route exact path="/new/goal" render={props => <CreateGoal onAddGoal={addGoalHandler} {...props}/>} />
+        </Switch>
       </div>
     </Router>
   );
 }
 
 export default App;
+
+// <ul>
+//   <li>
+//     <Link to="/">Home</Link>
+//   </li>
+//   <li>
+//     <Link to="/goals">Goals</Link>
+//   </li>
+//   <li>
+//     <Link to="/new/goal">Create Goal</Link>
+//   </li>
+// </ul>;

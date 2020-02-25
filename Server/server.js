@@ -1,19 +1,13 @@
-const express = require("express"),
-  app = express(),
-  bodyParser = require("body-parser"),
-  fs = require("fs"),
-  path = require("path"),
-  PORT = 5000,
-  mongoose = require("mongoose");
+const express = require('express');
+const connectDB = require('./config/db');
 
-// support parsing of application/json type post data
-app.use(bodyParser.json());
+const app = express();
+// Connect DataBase
+connectDB();
 
-//support parsing of application/x-www-form-urlencoded post data
-app.use(bodyParser.urlencoded({ extended: true }));
+app.get('/', (req, res) => res.send("API Running"));
 
-// Middleware
-// app.use((req, res, next) => {});
+const PORT = process.env.PORT || 5000
 
-// Server
-app.listen(PORT, () => console.log(`Connected to server on ${PORT} fam.`));
+
+app.listen(PORT, () => console.log(`Server started on ${PORT}`));

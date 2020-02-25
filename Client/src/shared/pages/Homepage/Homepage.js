@@ -1,14 +1,16 @@
-import React, { Component } from 'react'
+import React from "react";
 
-export class Homepage extends Component {
-    render() {
-        return (
-            <div>
-                <h1>Been+On</h1>
-                <p>Keep track of your progress here</p>
-            </div>
-        )
-    }
-}
+// CSS
+import './Homepage.css';
 
-export default Homepage
+const Homepage = () => {
+  return (
+    <div className="home_content">
+      <h1 className="home_title">Been+On</h1>
+      <p id="home_content">Keep track of your progress here:</p>
+      <button>Start</button>
+    </div>
+  );
+};
+
+export default Homepage;

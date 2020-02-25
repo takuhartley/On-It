@@ -1,0 +1,23 @@
+body {
+    height: 100%;
+}
+
+.home_content {
+    text-align: center;
+    background-color: rgb(115, 156, 126);
+    width: 100%;
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+
+.home_title {
+    color: white;
+    margin: 40px;
+    padding: 200px 200px 0px 200px;
+}
+
+#home_content {
+    margin: 40px;
+    padding: 0px 200px 200px 200px;
+}

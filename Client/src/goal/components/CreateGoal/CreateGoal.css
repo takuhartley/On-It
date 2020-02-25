@@ -1,0 +1,11 @@
+.CreateGoal {
+    text-align: center;
+}
+
+.title {
+    padding: 20px;
+}
+
+form {
+   display: inline-block;
+}
