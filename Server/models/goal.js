@@ -1,12 +1,22 @@
-const mongoose = require('mongoose');
-
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const goalSchema = new Schema({
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  hours: { type: String, required: true },
-  creator: { type: mongoose.Types.ObjectId, required: true, ref: 'User' }
+const GoalSchema = new Schema({
+  title: { 
+    type: String, 
+    required: true 
+  },
+  description: { 
+    type: String, 
+    required: true 
+  },
+  hours: { 
+    type: String, 
+    required: true 
+  },
+  user: { 
+    type: mongoose.Types.ObjectId, required: true 
+  }
 });
 
-module.exports = mongoose.model('Goal', goalSchema);
+module.exports = mongoose.model("Goal", GoalSchema);
