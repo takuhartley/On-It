@@ -3,7 +3,8 @@ const Schema = mongoose.Schema;
 
 const ProgressSchema = new Schema({
     goal: {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: "goal"
     },
     title: {
         type: String,
@@ -14,4 +15,4 @@ const ProgressSchema = new Schema({
     }
 })
 
-module.exports = mongoose.model("Progress", ProgressSchema);
+module.exports = mongoose.model("progress", ProgressSchema);
