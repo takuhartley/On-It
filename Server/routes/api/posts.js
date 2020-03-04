@@ -20,4 +20,4 @@
 // // @desc       Deleting goals
 // // @access     Private
 
-// module.export = router;
+// module.exports = router;

@@ -8,12 +8,28 @@ const config = require("config");
 // User models
 const User = require("../../models/User");
 
-// @route      GET api/users
-// @desc       See list of users
-// @access     Private
+// @route      GET api/users/:id
+// @desc       Find one user by ID
+// @access     Public
+router.get("/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    res.json(user);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error(error.message);
+    if (error.kind === "ObjectId") {
+      return res.status(404).json({ msg: "User not found" });
+    }
+    res.status(500).send("Server error");
+  }
+});
 
 // @route      POST api/users
-// @desc       Register user
+// @desc       Register new user
 // @access     Public
 router.post(
   "/",
@@ -22,11 +38,11 @@ router.post(
       .not()
       .isEmpty(),
     check("email", "Please enter your email")
-      .not()
-      .isEmpty(),
-    check("password", "Please enter a password")
-      .not()
-      .isEmpty()
+      .isEmail(),
+    check(
+      "password",
+      "please enter a password with 6 or more characters"
+    ).isLength({ min: 6 })
   ],
   async (req, res) => {
 
@@ -35,53 +51,50 @@ router.post(
 
     // Displaying Errors through JSON
     if (!errors.isEmpty()) {
-      
+
+      // Return formated errors to JSON array
       return res.status(400).json({ errors: errors.array() });
     }
 
     const { name, email, password } = req.body;
 
     try {
+
       // See if user exists
-      let user = await User.findOne({
+      let userExists = await User.findOne({
         email
       });
-      if (user) {
+      if (userExists) {
         return res
           .status(400)
           .json({ errors: [{ msg: "User already exists" }] });
       }
 
-      // Get users gravatar
-      const avatar = gravatar.url(email, {
-        s: "200",
-        r: "pg",
-        d: "mm"
-      });
-
-      user = new User({
+      // Initialize new User
+      newUser = new User({
         name,
         email,
-        avatar,
         password
       });
 
       // Encrypt password
       const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(password, salt);
-      await user.save();
+      newUser.password = await bcrypt.hash(password, salt);
+      await newUser.save();
 
       // Return jsonwebtoken
       const payload = {
-        user: {
-          id: user.id
+        newUser: {
+          id: newUser.id
         }
       };
+
+      // Sign the webtoken
       jwt.sign(
         payload,
         config.get("jwtSecret"),
         // Experation
-        { expiresIn: 360000 },
+        { expiresIn: 3600000 },
         // Error
         (err, token) => {
           if (err) throw err;
@@ -89,6 +102,7 @@ router.post(
         }
       );
     } catch (err) {
+
       // Server error
       console.log(err.message);
       res.status(500).send("Server error");
@@ -96,16 +110,4 @@ router.post(
   }
 );
 
-// @route      PUT api/users/:usr_id
-// @desc       Edit user
-// @access     Private
-// router.put('/', (req, res) {
-//     console.log("list all users")
-// });
-
-// @route      DELETE api/users/:usr_id
-// @desc       Delete user
-// @access     Private
-// router.delete('/', (req, res) {
-//     console.log("list all users")
-// })
+module.exports = router;

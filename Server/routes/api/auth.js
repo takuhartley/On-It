@@ -4,17 +4,19 @@ const config = require("config");
 const express = require("express");
 const jwt = require("jsonwebtoken");
 
-
+// Middleware
 const auth = require("../../middleware/auth");
 const User = require("../../models/User");
+
 
 const router = express.Router();
 
 // @route      GET api/auth
-// @desc       Test route
-// @access     Public
+// @desc       Get user token
+// @access     Private
 router.get("/", auth, async (req, res) => {
   try {
+    // Find user by ID
     const user = await User.findById(req.user.id).select("-password");
     res.json(user);
   } catch (err) {
@@ -81,7 +83,6 @@ router.post(
         }
       );
     } catch (err) {
-
       // Server error
       console.log(err.message);
       res.status(500).send("Server error");

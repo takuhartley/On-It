@@ -20,4 +20,4 @@ router.put('/edit/:id', (req, res) => res.send('Edit progress'));
 // @desc       Deleting goals
 // @access     Private
 
-module.export = router;
+module.exports = router;
