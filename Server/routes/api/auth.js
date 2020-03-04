@@ -1,91 +1,92 @@
-// const bcrypt = require("bcryptjs");
-// const { check, validationResult } = require("express-validator");
-// const config = require("config");
-// const express = require("express");
-// const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const { check, validationResult } = require("express-validator");
+const config = require("config");
+const express = require("express");
+const jwt = require("jsonwebtoken");
 
 
-// const auth = require("../../middleware/auth");
-// const User = require("../../models/User");
+const auth = require("../../middleware/auth");
+const User = require("../../models/User");
 
-// const router = express.Router();
-// // @route      GET api/auth
-// // @desc       Test route
-// // @access     Public
-// router.get("/", auth, async (req, res) => {
-//   try {
-//     const user = await User.findById(req.user.id).select("-password");
-//     res.json(user);
-//   } catch (err) {
-//     console.error(err.message);
-//     res.status(500).send("Server error");
-//   }
-// });
+const router = express.Router();
 
-// // @route      POST api/users
-// // @desc       Authenticate user and get token
-// // @access     Public
-// router.post(
-//   "/",
-//   [
-//     check("email", "please include a valid email").isEmail(),
-//     check("password", "Password is required").exists()
-//   ],
-//   async (req, res) => {
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//       return res.status(400).json({ errors: errors.array() });
-//     }
+// @route      GET api/auth
+// @desc       Test route
+// @access     Public
+router.get("/", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    res.json(user);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
 
-//     const { email, password } = req.body;
+// @route      POST api/users
+// @desc       Authenticate user and get token
+// @access     Public
+router.post(
+  "/",
+  [
+    check("email", "please include a valid email").isEmail(),
+    check("password", "Password is required").exists()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-//     try {
-//       // See if user exists
-//       let user = await User.findOne({
-//         email
-//       });
-//       if (!user) {
-//         return res
-//           .status(400)
-//           .json({ errors: [{ msg: "Invalid Credentials" }] });
-//       }
+    const { email, password } = req.body;
 
-//       // Make sure password matches
-//       const isMatch = await bcrypt.compare(password, user.password);
+    try {
+      // See if user exists
+      let user = await User.findOne({
+        email
+      });
+      if (!user) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Invalid Credentials" }] });
+      }
 
-//       // NOT a password match
-//       if (!isMatch) {
-//         return res
-//           .status(400)
-//           .json({ errors: [{ msg: "Invalid Credentials" }] });
-//       }
+      // Make sure password matches
+      const isMatch = await bcrypt.compare(password, user.password);
 
-//       // Return jsonwebtoken
-//       const payload = {
-//         user: {
-//           id: user.id
-//         }
-//       };
+      // NOT a password match
+      if (!isMatch) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Invalid Credentials" }] });
+      }
 
-//       // Signing token
-//       jwt.sign(
-//         payload,
-//         config.get("jwtSecret"),
-//         // Experation
-//         { expiresIn: 360000 },
-//         // Error
-//         (err, token) => {
-//           if (err) throw err;
-//           res.json({ token });
-//         }
-//       );
-//     } catch (err) {
+      // Return jsonwebtoken
+      const payload = {
+        user: {
+          id: user.id
+        }
+      };
 
-//       // Server error
-//       console.log(err.message);
-//       res.status(500).send("Server error");
-//     }
-//   }
-// );
+      // Signing token
+      jwt.sign(
+        payload,
+        config.get("jwtSecret"),
+        // Experation
+        { expiresIn: 360000 },
+        // Error
+        (err, token) => {
+          if (err) throw err;
+          res.json({ token });
+        }
+      );
+    } catch (err) {
 
-// module.exports = router;
+      // Server error
+      console.log(err.message);
+      res.status(500).send("Server error");
+    }
+  }
+);
+
+module.exports = router;
