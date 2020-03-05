@@ -11,7 +11,7 @@ const ProgressSchema = new Schema({
         required: true
     },
     time: {
-        // in minutes to hours
+        
     }
 })
 

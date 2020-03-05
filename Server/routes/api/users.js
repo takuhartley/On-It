@@ -77,6 +77,7 @@ router.post(
       }
 
       // Initialize new User
+      const user = await User.findById(req.user.id).select("-password");
       newUser = new User({
         name,
         email,

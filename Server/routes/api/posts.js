@@ -9,31 +9,47 @@ const auth = require("../../middleware/auth");
 const Post = require("../../models/Post");
 const User = require("../../models/User");
 
-// @route      GET api/goals
-// @desc       Test route
-// @access     Public
-router.get("/", (req, res) => res.send("Goals route"));
+// @route      GET api/posts/me
+// @desc       Get current users profile
+// @access     Private
+router.get("/me", auth, async (req, res) => {
+  try {
+    const post = await Post.findOne({
+      user: req.user.id
+    }).populate("user", "name");
 
-// @route      POST api/goals/new
+    // If no profile
+    if (!post) {
+      return res.status(400).json({ msg: "There is no post for this user" });
+    }
+    // If is profile
+    res.json(post);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// @route      POST api/posts/new
 // @desc       Adding goals
 // @access     Private
 
 router.post(
   "/new",
-  //[
-  //auth,
   [
-    check("title", "Title is required")
-      .not()
-      .isEmpty(),
-    check("desc", "Description is required")
-      .not()
-      .isEmpty(),
-    check("duration", "Duration is required")
-      .not()
-      .isEmpty()
+    auth,
+    [
+      check("title", "Title is required")
+        .not()
+        .isEmpty(),
+      check("desc", "Description is required")
+        .not()
+        .isEmpty(),
+      check("dura", "Duration is required")
+        .not()
+        .isEmpty()
+    ]
   ],
-  //]
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -42,28 +58,110 @@ router.post(
 
     const { title, desc, dura } = req.body;
 
+    // Build profile object
+    const postFields = {};
+    postFields.user = req.creator.id;
+    if (title) profileFields.title = title;
+    if (desc) profileFields.desc = desc;
+    if (dura) profileFields.dura = dura;
 
     try {
       // Initialize user
-      const user = await User.findById(req.user.id).select("-password");
+      let post = await Post.findOne({ user: req.user.id });
 
+      if (post) {
+        // Update
+        post = await Post.findOneAndUpdate(
+          { user: req.user.id },
+          { $set: profileFields },
+          { new: true }
+        );
 
-      // Initialize newPost
-      const newPost = new Post({
-        user: req.user.creator,
-        title: req.body.text,
-        desc: req.body.text,
-        dura: req.body.text
-      });
+        // Entire Profile
+        return res.json(post);
+      }
 
-      // Save new post
-      const post = await newPost.save();
+      // Create new Post
+      newPost = new Post(postFields);
 
-      res.json(post);
+      // Save
+      await newPost.save();
+      res.json(newPost);
     } catch (error) {
       // Server errors
       console.error(error.message);
       res.status(500).send("Server error");
+    }
+  }
+);
+
+router.post(
+  "/",
+  [
+    auth,
+    [
+      check("title", "Title is required")
+        .not()
+        .isEmpty(),
+      check("desc", "Description is required")
+        .not()
+        .isEmpty(),
+      check("dura", "Duration is required")
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const {
+      title,
+      desc,
+      dura,
+      from,
+      to,
+      completed,
+      progress
+    } = req.body;
+
+    // Build profile object
+    const postFields = {};
+    postFields.user = req.user.id;
+    if (title) postFields.title = title;
+    if (desc) postFields.desc = desc;
+    if (dura) postFields.dura = dura;
+    if (from) postFields.from = from;
+    if (to) postFields.to = to;
+    if (completed) postFields.completed = completed;
+    if (progress) {
+      postFields.progress = progress.split(",").map(skill => skill.trim());
+    }
+
+    try {
+      let post = await Post.findOne({ user: req.user.id });
+
+      if (post) {
+        // Update
+        post = await Post.findOneAndUpdate(
+          { user: req.user.id },
+          { $set: postFields },
+          { new: true }
+        );
+        // Entire Post
+        return res.json(post);
+      }
+      // Create
+      post = new Post(postFields);
+
+      // Save
+      await post.save();
+      res.json(post);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server Error");
     }
   }
 );

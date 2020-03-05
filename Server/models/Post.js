@@ -14,13 +14,41 @@ const PostSchema = new Schema({
     type: String,
     required: true
   },
-  time: {
+  dura: {
     type: String,
     required: true
   },
-  from: {},
-  to: {},
-  completed: false
+  from: {
+    type: Date,
+    required: true
+  },
+  to: {
+    type: Date
+  },
+  completed: {
+    type: Boolean,
+    default: false
+  },
+  progress: [
+    {
+      text: {
+        type: String,
+        required: true
+      },
+      summary: {
+        type: String,
+        required: true
+      },
+      hours: {
+        type: String,
+        required: true
+      },
+      date: {
+        type: Date,
+        default: Date.now
+      }
+    }
+  ]
 });
 
-module.exports = mongoose.model("post", PostSchema);
+module.exports = Post = mongoose.model("post", PostSchema);
