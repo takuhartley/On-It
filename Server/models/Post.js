@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const PostSchema = new Schema({
+  // Reference to user model
   creator: {
     type: Schema.Types.ObjectId,
     ref: "user"

@@ -1,26 +1,29 @@
-// const express = require("express");
-// const router = express.Router();
-// const { check, validationResult } = require("express-validator");
-// // Middleware
-// const auth = require("../../middleware/auth");
+const express = require("express");
+const router = express.Router();
+const { check, validationResult } = require("express-validator");
 
-// // Models
-// const Profile = require("../../models/Profile");
-// const User = require("../../models/User");
+// Middleware
+const auth = require("../../middleware/auth");
+
+// Models
+const Profile = require("../../models/Profile");
+const User = require("../../models/User");
 
 // @route      GET api/profile/me
 // @desc       Get current users profile
 // @access     Private
+
 router.get("/me", auth, async (req, res) => {
   try {
     const profile = await Profile.findOne({
       user: req.user.id
-    }).populate("user", ["name"]);
+    }).populate("user", "name");
 
     // If no profile
     if (!profile) {
       return res.status(400).json({ msg: "There is no profile for this user" });
     }
+
     // If is profile
     res.json(profile);
   } catch (err) {
@@ -38,10 +41,7 @@ router.post(
   [
     auth,
     [
-      check("status", "Status is required")
-        .not()
-        .isEmpty(),
-      check("skills", "Skills is required")
+      check("bio", "Status is required")
         .not()
         .isEmpty()
     ]
@@ -52,43 +52,15 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const {
-      company,
-      location,
-      website,
-      bio,
-      skills,
-      status,
-      githubusername,
-      youtube,
-      twitter,
-      instagram,
-      linkedin,
-      facebook
-    } = req.body;
+    const { website, location, status, bio } = req.body;
 
     // Build profile object
     const profileFields = {};
     profileFields.user = req.user.id;
-    if (company) profileFields.company = company;
     if (website) profileFields.website = website;
     if (location) profileFields.location = location;
-    if (bio) profileFields.bio = bio;
     if (status) profileFields.status = status;
-    if (githubusername) profileFields.githubusername = githubusername;
-    if (skills) {
-      profileFields.skills = skills.split(",").map(skill => skill.trim());
-    }
-
-    // console.log(profileFields.skills);
-
-    // Build Social Object
-    profileFields.social = {};
-    if (youtube) profileFields.social.youtube = youtube;
-    if (twitter) profileFields.social.twitter = twitter;
-    if (facebook) profileFields.social.facebook = facebook;
-    if (linkedin) profileFields.social.linkedin = linkedin;
-    if (instagram) profileFields.social.instagram = instagram;
+    if (bio) profileFields.bio = bio;
 
     try {
       let profile = await Profile.findOne({ user: req.user.id });
@@ -176,32 +148,32 @@ router.put(
     }
     // Array destructuring
     const {
-        title,
-        company,
-        location,
-        from,
-        to,
-        current,
-        description
-    } = req.body
-    
+      title,
+      company,
+      location,
+      from,
+      to,
+      current,
+      description
+    } = req.body;
+
     const newExp = {
-        title,
-        company,
-        location,
-        from,
-        to,
-        current,
-        description
-    }
+      title,
+      company,
+      location,
+      from,
+      to,
+      current,
+      description
+    };
 
     try {
       // Get user
-      const profile = await Profile.findOne({ user: req.user.id})
+      const profile = await Profile.findOne({ user: req.user.id });
 
       profile.experience.unshift(newExp);
 
-      await profile.save()
+      await profile.save();
       res.json(profile);
     } catch (err) {
       console.error(err.message);

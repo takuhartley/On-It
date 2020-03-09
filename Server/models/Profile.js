@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const ProfileSchema = new Schema({
@@ -16,32 +16,13 @@ const ProfileSchema = new Schema({
   status: {
     type: String
   },
-  interests: {
-    type: [String],
-    required: true
-  },
   bio: {
     type: String
   },
-  social: {
-    youtube: {
-      type: String
-    },
-    twitter: {
-      type: String
-    },
-    facebook: {
-      type: String
-    },
-    linkedin: {
-      type: String
-    },
-    instragram: {
-      type: String
-    }
-  },
   date: {
-      type: Date,
-      default: Date.now
+    type: Date,
+    default: Date.now
   }
 });
+
+module.exports = Profile = mongoose.model("profile", ProfileSchema);

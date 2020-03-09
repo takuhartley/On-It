@@ -15,6 +15,20 @@ const User = require("../../models/User");
 // @desc       Find one user by ID
 // @access     Public
 
+router.get("/", async (req, res) => {
+  try {
+    const allUsers = await User.find().sort({ date: -1 });
+    res.json(allUsers);
+  } catch (error) {
+    // Error
+    res.status(500).send("Server error");
+  }
+});
+
+// @route      GET api/users/:id
+// @desc       Find one user by ID
+// @access     Public
+
 router.get("/:id", auth, async (req, res) => {
   try {
     // Initialize finding user by ID
@@ -120,5 +134,21 @@ router.post(
 // @desc       Delete user by ID
 // @access     Private
 
+router.delete("/:user_id", auth, async (req, res) => {
+  try {
+    // Get user
+    const user = await req.params.id
+    // If user doesn't exist
+    if (!user) {
+      // Return JSON error message
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    await User.remove(user);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
 
 module.exports = router;
