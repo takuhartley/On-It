@@ -8,7 +8,7 @@ const jwt = require("jsonwebtoken");
 const auth = require("../../middleware/auth");
 const User = require("../../models/User");
 
-
+// Set Router
 const router = express.Router();
 
 // @route      GET api/auth
@@ -40,6 +40,7 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
+    // Deconstructing
     const { email, password } = req.body;
 
     try {
