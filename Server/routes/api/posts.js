@@ -15,7 +15,13 @@ router.post(
   [
     auth,
     [
-      check("text", "Text is required")
+      check("title", "Title is required")
+        .not()
+        .isEmpty(),
+      check("desc", "Description is required")
+        .not()
+        .isEmpty(),
+      check("dura", "Duration is required")
         .not()
         .isEmpty()
     ]
@@ -31,10 +37,10 @@ router.post(
       const user = await User.findById(req.user.id).select("-password");
       // Initialize newPost
       const newPost = new Post({
-        text: req.body.text,
-        name: user.name,
-        avatar: user.avatar,
-        user: req.user.id
+        title: req.body.title,
+        desc: req.body.desc,
+        dura: req.body.dura,
+        creator: req.user.id
       });
       // Save post
       const post = await newPost.save();
@@ -103,11 +109,50 @@ router.delete("/:id", auth, async (req, res) => {
     res.json({ msg: "Post removed" });
   } catch (error) {
     console.error(error.message);
+
     if (error.kind === "ObjectId") {
       return res.status(404).json({ msg: "Post not found" });
     }
     res.status(500).send("Server error");
   }
 });
+
+// @route    POST api/post/progress/:id
+// @desc     Add progress on a post
+// @access   Private
+router.post(
+  "progress/:id",
+  [
+    auth,
+    [
+      check("text", "Text is required")
+        .not()
+        .isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const user = await User.findById(req.user.id).select("-password");
+      const post = await Post.findById(req.params.id);
+      const newProgress = {
+        text: req.body.text,
+        summary: req.body.summary,
+        hours: req.body.hours,
+        creator: user.name
+      };
+      post.progress.unshift(newProgress);
+      await post.save();
+      res.json(post);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server Error");
+    }
+  }
+);
 
 module.exports = router;

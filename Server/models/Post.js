@@ -20,8 +20,7 @@ const PostSchema = new Schema({
     required: true
   },
   from: {
-    type: Date,
-    required: true
+    type: Date
   },
   to: {
     type: Date
@@ -47,6 +46,10 @@ const PostSchema = new Schema({
       date: {
         type: Date,
         default: Date.now
+      },
+      creator: {
+        type: Schema.Types.ObjectId,
+        ref: "user"
       }
     }
   ]
