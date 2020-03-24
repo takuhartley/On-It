@@ -16,7 +16,7 @@ const PostSchema = new Schema({
     required: true
   },
   dura: {
-    type: String,
+    type: Number,
     required: true
   },
   from: {
@@ -31,6 +31,10 @@ const PostSchema = new Schema({
   },
   progress: [
     {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'users'
+      },
       text: {
         type: String,
         required: true
@@ -40,16 +44,12 @@ const PostSchema = new Schema({
         required: true
       },
       hours: {
-        type: String,
+        type: Number,
         required: true
       },
       date: {
         type: Date,
         default: Date.now
-      },
-      creator: {
-        type: Schema.Types.ObjectId,
-        ref: "user"
       }
     }
   ]

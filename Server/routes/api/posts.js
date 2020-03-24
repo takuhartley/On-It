@@ -7,6 +7,7 @@ const auth = require("../../middleware/auth");
 const Post = require("../../models/Post");
 const User = require("../../models/User");
 
+//--------------------------------------------------//
 // @route      POST api/posts
 // @desc       Create a post
 // @access     Private
@@ -40,7 +41,7 @@ router.post(
         title: req.body.title,
         desc: req.body.desc,
         dura: req.body.dura,
-        creator: req.user.id
+        creator: user.id
       });
       // Save post
       const post = await newPost.save();
@@ -53,6 +54,7 @@ router.post(
   }
 );
 
+//--------------------------------------------------//
 // @route      GET api/posts
 // @desc       Get all posts
 // @access     Private
@@ -67,6 +69,7 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
+//--------------------------------------------------//
 // @route      GET api/posts/:id
 // @desc       Get post by ID
 // @access     Private
@@ -88,6 +91,7 @@ router.get("/:id", auth, async (req, res) => {
   }
 });
 
+//--------------------------------------------------//
 // @route      DELETE api/posts/:id
 // @desc       Delete a post
 // @access     Private
@@ -117,11 +121,12 @@ router.delete("/:id", auth, async (req, res) => {
   }
 });
 
+//--------------------------------------------------//
 // @route    POST api/post/progress/:id
 // @desc     Add progress on a post
 // @access   Private
 router.post(
-  "progress/:id",
+  "/progress/:id",
   [
     auth,
     [
@@ -140,14 +145,20 @@ router.post(
       const user = await User.findById(req.user.id).select("-password");
       const post = await Post.findById(req.params.id);
       const newProgress = {
+        user: req.user.id,
         text: req.body.text,
         summary: req.body.summary,
         hours: req.body.hours,
-        creator: user.name
+        name: user.name
       };
+
+      //--------------------------------------------------//
+      // Implement logic to substract new Progress hours from Post overall hours
+      //--------------------------------------------------//
+
       post.progress.unshift(newProgress);
       await post.save();
-      res.json(post);
+      res.json(post.progress);
     } catch (err) {
       console.error(err.message);
       res.status(500).send("Server Error");

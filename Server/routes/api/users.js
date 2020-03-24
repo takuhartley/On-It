@@ -11,6 +11,85 @@ const auth = require("../../middleware/auth");
 // User model
 const User = require("../../models/User");
 
+//--------------------------------------------------//
+// @route      POST api/users
+// @desc       Register new user
+// @access     Public
+
+// @route      POST api/users
+// @desc       Register user
+// @access     Public
+router.post(
+  "/",
+  [
+    check("name", "Name is required")
+      .not()
+      .isEmpty(),
+    check("email", "please include a valid email").isEmail(),
+    check(
+      "password",
+      "please enter a password with 6 or more characters"
+    ).isLength({ min: 6 })
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { name, email, password } = req.body;
+
+    try {
+      // See if user exists
+      let user = await User.findOne({
+        email
+      });
+      if (user) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "User already exists" }] });
+      }
+
+      user = new User({
+        name,
+        email,
+        password
+      });
+
+      // Encrypt password
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
+      await user.save();
+
+      // Return jsonwebtoken
+      const payload = {
+        user: {
+          id: user.id
+        }
+      };
+      jwt.sign(
+        payload,
+        config.get("jwtSecret"),
+        // Experation
+        { expiresIn: 360000 },
+        // Error
+        (err, token) => {
+          if (err) throw err;
+          res.json({ token });
+        }
+      );
+    } catch (err) {
+      // Server error
+      console.log(err.message);
+      res.status(500).send("Server error");
+    }
+  }
+);
+//--------------------------------------------------//
+
+
+
+//--------------------------------------------------//
 // @route      GET api/users/:id
 // @desc       Find one user by ID
 // @access     Public
@@ -51,84 +130,6 @@ router.get("/:id", auth, async (req, res) => {
     res.status(500).send("Server error");
   }
 });
-
-// @route      POST api/users
-// @desc       Register new user
-// @access     Public
-router.post(
-  "/",
-  [
-    check("name", "Please enter your name")
-      .not()
-      .isEmpty(),
-    check("email", "Please enter your email").isEmail(),
-    check(
-      "password",
-      "please enter a password with 6 or more characters"
-    ).isLength({ min: 6 })
-  ],
-  async (req, res) => {
-    // Initializing Errors
-    const errors = validationResult(req);
-
-    // Displaying Errors through JSON
-    if (!errors.isEmpty()) {
-      // Return formated errors to JSON array
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { name, email, password } = req.body;
-
-    try {
-      // See if user exists
-      let userExists = await User.findOne({
-        email
-      });
-      if (userExists) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: "User already exists" }] });
-      }
-
-      // Initialize new User
-      const user = await User.findById(req.user.id).select("-password");
-      newUser = new User({
-        name,
-        email,
-        password
-      });
-
-      // Encrypt password
-      const salt = await bcrypt.genSalt(10);
-      newUser.password = await bcrypt.hash(password, salt);
-      await newUser.save();
-
-      // Return jsonwebtoken
-      const payload = {
-        newUser: {
-          id: newUser.id
-        }
-      };
-
-      // Sign the webtoken
-      jwt.sign(
-        payload,
-        config.get("jwtSecret"),
-        // Experation
-        { expiresIn: 3600000 },
-        // Error
-        (err, token) => {
-          if (err) throw err;
-          res.json({ token });
-        }
-      );
-    } catch (err) {
-      // Server error
-      console.log(err.message);
-      res.status(500).send("Server error");
-    }
-  }
-);
 
 // @route      DELETE api/user/:id
 // @desc       Delete user by ID
